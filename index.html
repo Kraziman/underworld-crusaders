@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kraziman | Стриймър</title>
+<meta name="description" content="Александър „Kraziman“ Танчев: игри, стриймове и общността Underworld Crusaders. / Gaming streams and the Underworld Crusaders community.">
+<meta name="theme-color" content="#141216">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Rubik:wght@400;500;600&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add("js");</script>
+<style>
+  :root {
+    --bg: #141216;
+    --panel: #27232b;
+    --line: #443c4d;
+    --text: #d8cab8;
+    --muted: #8a8190;
+    --muted-2: #a79eaf;
+    --accent: #ac82e9;
+    --accent-dark: #6f4fa8;
+    --red: #ff5555;
+    --red-dark: #a83232;
+    --shadow: #0c0b0e;
+  }
+  * { box-sizing: border-box; }
+  html { height: 100%; font-size: clamp(16px, 0.5vw + 9px, 20px); scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    min-height: 100%;
+    padding: 1.75rem 1.25rem 3rem;
+    background:
+      radial-gradient(90% 50% at 50% 0%, rgba(172,130,233,.22) 0%, transparent 70%),
+      var(--bg);
+    background-attachment: fixed;
+    color: var(--text);
+    font-family: "Rubik", system-ui, -apple-system, "Segoe UI", sans-serif;
+    line-height: 1.5;
+    overflow-x: hidden;
+  }
+  main { position: relative; z-index: 1; width: 100%; max-width: 34rem; margin: 0 auto; text-align: center; }
+  section[id] { scroll-margin-top: 5rem; }
+
+  /* Retro grid floor */
+  .floor {
+    position: fixed;
+    left: -50%;
+    right: -50%;
+    bottom: 0;
+    height: 45vh;
+    z-index: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(rgba(172,130,233,.45) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(172,130,233,.45) 1px, transparent 1px);
+    background-size: 56px 56px;
+    transform: perspective(380px) rotateX(62deg);
+    transform-origin: 50% 100%;
+    -webkit-mask-image: linear-gradient(to top, #000 0%, transparent 85%);
+            mask-image: linear-gradient(to top, #000 0%, transparent 85%);
+    opacity: .6;
+    animation: scroll 6s linear infinite;
+  }
+  @keyframes scroll { to { background-position: 0 56px, 0 0; } }
+
+  /* Floating pixels */
+  .p {
+    position: fixed;
+    bottom: -12px;
+    border-radius: 1px;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 0;
+    animation: floatUp linear infinite;
+  }
+  @keyframes floatUp {
+    0%   { transform: translateY(0) rotate(0deg); opacity: 0; }
+    10%  { opacity: .8; }
+    90%  { opacity: .8; }
+    100% { transform: translateY(-110vh) rotate(180deg); opacity: 0; }
+  }
+
+  /* Language switch + top navigation */
+  .lang {
+    display: inline-flex;
+    margin: 0 0 1.6rem;
+    padding: 3px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--panel);
+  }
+  .lang button {
+    font: inherit;
+    font-size: .85rem;
+    font-weight: 600;
+    min-width: 3.25rem;
+    padding: .4rem .9rem;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--muted-2);
+    cursor: pointer;
+    transition: background-color .2s, color .2s;
+  }
+  .lang button[aria-pressed="true"] { background: var(--accent); color: var(--bg); }
+  .lang button:focus-visible, .nav a:focus-visible { outline: 3px solid var(--text); outline-offset: 2px; }
+  .nav { display: none; }
+
+  /* Hero */
+  .hero { display: flex; flex-direction: column; align-items: center; }
+  .portrait {
+    position: relative;
+    order: -1;
+    width: min(15rem, 62vw);
+    margin: 0 auto 1.6rem;
+    animation: pop .8s cubic-bezier(.2,1.4,.4,1) backwards, bob 6s ease-in-out 1s infinite;
+  }
+  .portrait img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border: 3px solid var(--accent);
+    border-radius: 1.1rem;
+    box-shadow: 0 .5rem 0 #4a3578, 0 0 3rem rgba(172,130,233,.45);
+    transform: rotate(-2deg);
+    transition: transform .3s;
+  }
+  .portrait:hover img { transform: rotate(0deg) scale(1.02); }
+  .sticker {
+    position: absolute;
+    right: -.5rem;
+    bottom: -.8rem;
+    padding: .2rem .8rem .3rem;
+    border-radius: .5rem;
+    background: var(--red);
+    color: var(--bg);
+    font-family: "Pirata One", Georgia, serif;
+    font-size: 1.15rem;
+    line-height: 1.2;
+    box-shadow: 0 4px 0 var(--red-dark);
+    transform: rotate(3deg);
+    white-space: nowrap;
+  }
+  @keyframes pop { from { transform: scale(.85); opacity: 0; } }
+  @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+
+  h1 {
+    font-family: "Pirata One", Georgia, serif;
+    font-weight: 400;
+    font-size: clamp(4.2rem, 24vw, 6.4rem);
+    line-height: 1;
+    margin: 0 0 .5rem;
+    white-space: nowrap;
+    color: var(--text);
+    text-shadow: 0 .06em 0 #4a3578, 0 0 30px rgba(172,130,233,.5);
+  }
+  h1 .l {
+    display: inline-block;
+    animation:
+      drop .7s cubic-bezier(.2,1.4,.4,1) backwards,
+      wave 3.2s ease-in-out infinite;
+    animation-delay: calc(var(--i) * 80ms), calc(1s + var(--i) * 140ms);
+  }
+  @keyframes drop { from { transform: translateY(-60px) scale(.6); opacity: 0; } }
+  @keyframes wave { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+
+  .role {
+    margin: 0 0 .9rem;
+    font-size: 1.05rem;
+    color: var(--muted-2);
+    animation: rise .6s ease-out .9s backwards;
+  }
+  .uc { font-family: "Pirata One", Georgia, serif; font-size: 1.3em; line-height: 1; color: var(--accent); }
+  .tagline { margin: 0 0 1.6rem; font-size: 1.15rem; animation: rise .6s ease-out 1.1s backwards; }
+  @keyframes rise { from { transform: translateY(24px); opacity: 0; } }
+  .btns { display: flex; flex-wrap: wrap; justify-content: center; gap: .8rem; animation: rise .6s ease-out 1.3s backwards; }
+
+  .btn {
+    display: inline-block;
+    font: inherit;
+    font-weight: 600;
+    padding: .75rem 1.4rem;
+    border: 2px solid var(--line);
+    border-radius: .65rem;
+    background: transparent;
+    color: var(--text);
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform .15s, border-color .15s, box-shadow .15s;
+  }
+  .btn:hover { transform: translateY(-2px); border-color: var(--accent); }
+  .btn:active { transform: translateY(2px); }
+  .btn:focus-visible { outline: 3px solid var(--text); outline-offset: 3px; }
+  .btn.go { background: var(--accent); border-color: var(--accent); color: var(--bg); box-shadow: 0 4px 0 var(--accent-dark); }
+  .btn.red { background: var(--red); border-color: var(--red); color: var(--bg); box-shadow: 0 4px 0 var(--red-dark); }
+  .btn.red:hover { border-color: #ff8a8a; }
+
+  /* Ticker band */
+  .ticker-wrap { width: 100vw; margin: 2.8rem 0 0 calc(50% - 50vw); padding: 1rem 0; overflow: hidden; }
+  .ticker {
+    width: 110%;
+    margin-left: -5%;
+    padding: .6rem 0;
+    background: var(--accent);
+    color: var(--bg);
+    border-top: 2px solid #4a3578;
+    border-bottom: 2px solid #4a3578;
+    box-shadow: 0 4px 0 #4a3578;
+    transform: rotate(-1.2deg);
+    overflow: hidden;
+  }
+  .track { display: flex; width: max-content; animation: marquee 34s linear infinite; }
+  .tk {
+    flex: none;
+    white-space: pre;
+    font-size: .9rem;
+    font-weight: 600;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+  }
+  @keyframes marquee { to { transform: translateX(-50%); } }
+
+  /* Sections */
+  .block { margin-top: 3.8rem; }
+  .label {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 0 0 1.5rem;
+    font-size: .85rem;
+    font-weight: 600;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .label::before, .label::after { content: ""; flex: 1; height: 2px; }
+  .label::before { background: linear-gradient(90deg, transparent, var(--line)); }
+  .label::after  { background: linear-gradient(270deg, transparent, var(--line)); }
+
+  /* Cards */
+  .grid { display: grid; gap: .9rem; }
+  .link, .step {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: .9rem 1.1rem .9rem .9rem;
+    border: 2px solid var(--line);
+    border-radius: .75rem;
+    background: var(--panel);
+    box-shadow: 0 5px 0 var(--shadow);
+    color: var(--text);
+    text-decoration: none;
+    text-align: left;
+    transition: transform .15s, border-color .15s, box-shadow .15s;
+  }
+  .link:hover, .step:hover { transform: translateY(-3px); border-color: var(--accent); box-shadow: 0 8px 0 var(--shadow); }
+  .link:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--shadow); }
+  .link:focus-visible { outline: 3px solid var(--text); outline-offset: 3px; }
+  .slot {
+    flex: none;
+    width: 3.25rem;
+    height: 3.25rem;
+    display: grid;
+    place-items: center;
+    border: 2px solid var(--accent);
+    border-radius: .65rem;
+    background: var(--bg);
+    color: var(--accent);
+    transition: transform .2s;
+  }
+  .slot svg { width: 1.75rem; height: 1.75rem; display: block; }
+  .slot.num { font-family: "Pirata One", Georgia, serif; font-size: 1.9rem; line-height: 1; }
+  .link:hover .slot, .step:hover .slot { transform: rotate(-6deg) scale(1.08); }
+  .text { display: flex; flex-direction: column; min-width: 0; }
+  .name { font-weight: 600; font-size: 1.1rem; }
+  .sub { color: var(--muted-2); font-size: .9rem; }
+
+  /* Stream player (click to load) */
+  .player {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border: 2px solid var(--line);
+    border-radius: .75rem;
+    background:
+      repeating-linear-gradient(0deg, rgba(255,255,255,.035) 0 2px, transparent 2px 4px),
+      linear-gradient(135deg, #2f2350, #17131c);
+    box-shadow: 0 6px 0 var(--shadow);
+  }
+  .player .start {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: .4rem;
+    width: 100%;
+    border: 0;
+    background: none;
+    color: var(--text);
+    font: inherit;
+    cursor: pointer;
+  }
+  .player .start:focus-visible { outline: 3px solid var(--text); outline-offset: -6px; }
+  .play {
+    width: 4.5rem;
+    height: 4.5rem;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 5px 0 var(--accent-dark);
+    transition: transform .2s;
+  }
+  .play::before {
+    content: "";
+    margin-left: .3rem;
+    border-left: 1.4rem solid var(--bg);
+    border-top: .9rem solid transparent;
+    border-bottom: .9rem solid transparent;
+  }
+  .start:hover .play { transform: scale(1.1); }
+  .start .cap { font-weight: 600; margin-top: .6rem; }
+  .start .note { font-size: .8rem; color: var(--muted-2); }
+  .chipTag {
+    position: absolute;
+    top: .8rem;
+    left: .8rem;
+    padding: .15rem .7rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: rgba(20,18,22,.8);
+    font-size: .8rem;
+    color: var(--muted-2);
+  }
+  .player iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .under { display: flex; flex-wrap: wrap; justify-content: center; gap: .8rem; margin-top: 1.6rem; }
+
+  /* About */
+  .about-wrap { display: grid; gap: 1.6rem; max-width: 56rem; margin: 0 auto; }
+  .fullname { display: flex; flex-direction: column; align-items: center; margin: 0; line-height: 1.05; }
+  .fullname .fn, .fullname .ln {
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: .32em;
+    text-transform: uppercase;
+    color: var(--muted-2);
+  }
+  .fullname .uc {
+    margin: .15rem 0;
+    font-size: clamp(3.8rem, 19vw, 5.2rem);
+    font-weight: 400;
+    line-height: 1;
+    color: var(--accent);
+    text-shadow: 0 .06em 0 #4a3578, 0 0 30px rgba(172,130,233,.45);
+  }
+  .about-text p { margin: 0 0 1rem; font-size: 1.15rem; }
+  .about-text p:last-child { margin-bottom: 0; }
+
+  /* Link to the links page */
+  .link.wide { max-width: 46rem; margin: 0 auto; }
+  .link.wide .go { margin-left: auto; color: var(--accent); font-size: 2rem; font-weight: 600; line-height: 1; }
+
+  /* Community feature card */
+  .guild {
+    position: relative;
+    overflow: hidden;
+    padding: 1.75rem 1.25rem 1.6rem;
+    border: 2px solid var(--red);
+    border-radius: .75rem;
+    background: linear-gradient(135deg, #3c2f5c, var(--panel));
+    box-shadow: 0 6px 0 var(--red-dark);
+  }
+  .guild::after {
+    content: "";
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 60px;
+    left: -100px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.18), transparent);
+    transform: skewX(-20deg);
+    animation: shine 5s ease-in-out 1.6s infinite;
+    pointer-events: none;
+  }
+  @keyframes shine { 0% { left: -100px; } 35%, 100% { left: calc(100% + 100px); } }
+  .guild h3 {
+    margin: 0 0 .6rem;
+    font-family: "Pirata One", Georgia, serif;
+    font-weight: 400;
+    font-size: clamp(2.4rem, 11vw, 3.4rem);
+    line-height: 1;
+    color: var(--red);
+  }
+  .guild > p { max-width: 32rem; margin: 0 auto; }
+  .chips { display: flex; flex-wrap: wrap; justify-content: center; gap: .6rem; margin: 1.3rem 0 1.6rem; }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    padding: .35rem .85rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--bg);
+    font-size: .9rem;
+  }
+  .chip svg { width: 1rem; height: 1rem; color: var(--accent); }
+  .steps { display: grid; gap: .9rem; margin-bottom: 1.8rem; }
+
+  footer { margin-top: 3.2rem; color: var(--muted-2); font-size: .85rem; }
+
+  /* Scroll reveal (only when JS is running) */
+  .js .reveal { opacity: 0; transform: translateY(28px); transition: opacity .7s ease-out, transform .7s ease-out; }
+  .js .reveal.in { opacity: 1; transform: none; }
+
+  /* Leave confirmation */
+  dialog {
+    width: min(92vw, 26rem);
+    padding: 0;
+    border: 2px solid var(--accent);
+    border-radius: .9rem;
+    background: var(--panel);
+    color: var(--text);
+    box-shadow: 0 .5rem 0 var(--shadow), 0 0 40px rgba(172,130,233,.3);
+  }
+  dialog[open] { animation: pop .25s cubic-bezier(.2,1.4,.4,1); }
+  dialog::backdrop { background: rgba(20,18,22,.8); backdrop-filter: blur(3px); }
+  .box { padding: 1.6rem 1.5rem 1.5rem; text-align: center; }
+  .box h2 {
+    margin: 0 0 .5rem;
+    font-family: "Pirata One", Georgia, serif;
+    font-weight: 400;
+    font-size: 2rem;
+    line-height: 1.1;
+    color: var(--red);
+  }
+  .box p { margin: 0 0 .5rem; }
+  .box .url {
+    margin: 0 0 1.4rem;
+    padding: .45rem .7rem;
+    border-radius: .5rem;
+    background: var(--bg);
+    color: var(--muted-2);
+    font-size: .85rem;
+    word-break: break-all;
+  }
+  .actions { display: flex; gap: .75rem; }
+  .actions .btn { flex: 1; }
+
+  /* Wide screens */
+  @media (min-width: 900px) {
+    body { padding: 2rem 2.5rem 3rem; }
+    main { max-width: 62rem; }
+    .lang { position: fixed; top: 1.25rem; right: 1.5rem; margin: 0; z-index: 3; }
+    .nav {
+      display: flex;
+      position: fixed;
+      top: 1.25rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 3;
+      padding: 3px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(39,35,43,.88);
+      backdrop-filter: blur(6px);
+    }
+    .nav a {
+      padding: .4rem 1rem;
+      border-radius: 999px;
+      color: var(--muted-2);
+      font-size: .85rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background-color .2s, color .2s;
+    }
+    .nav a:hover { background: rgba(172,130,233,.2); color: var(--text); }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.15fr .85fr;
+      align-items: center;
+      gap: 3rem;
+      min-height: calc(100vh - 11rem);
+      min-height: calc(100dvh - 11rem);
+      padding-top: 2.5rem;
+      text-align: left;
+    }
+    .portrait { order: 1; width: min(24rem, 100%, 48vh); margin: 0 0 0 auto; }
+    h1 { font-size: clamp(5rem, min(12vw, 22vh), 10rem); }
+    .role { font-size: 1.15rem; }
+    .tagline { font-size: 1.35rem; }
+    .btns { justify-content: flex-start; }
+
+    .block { margin-top: 5.5rem; }
+    .player { max-width: 46rem; margin: 0 auto; }
+
+    .about-wrap { grid-template-columns: 1fr 1.1fr; gap: 3.5rem; align-items: center; }
+    .fullname { align-items: flex-start; }
+    .fullname .uc { font-size: clamp(4.6rem, 8vw, 7rem); }
+    .about-text {
+      padding: .4rem 0 .4rem 2.5rem;
+      border-left: 3px solid;
+      border-image: linear-gradient(to bottom, transparent, var(--accent), transparent) 1;
+    }
+    .about-text p { font-size: 1.3rem; }
+    .link.wide { padding: 1.2rem 1.5rem; }
+    .link.wide .name { font-size: 1.25rem; }
+    .guild { padding: 2.5rem 2rem 2.2rem; }
+    .steps { grid-template-columns: repeat(3, 1fr); gap: 1.6rem; max-width: 50rem; margin: 0 auto 2rem; }
+    .step { flex-direction: column; text-align: center; gap: .7rem; padding: 1.25rem 1rem; }
+    .step .text { align-items: center; }
+    .step:not(:last-child)::after {
+      content: "\203A";
+      position: absolute;
+      right: -1.15rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--accent);
+      font-size: 1.8rem;
+      font-weight: 600;
+      line-height: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .p { display: none; }
+    .js .reveal { opacity: 1; transform: none; }
+  }
+</style>
+</head>
+<body>
+<div class="floor" aria-hidden="true"></div>
+
+<nav class="nav" aria-label="Sections">
+  <a href="#watch" data-i18n="nWatch">Гледай</a>
+  <a href="#find" data-i18n="nFind">Линкове</a>
+  <a href="#about" data-i18n="nAbout">За мен</a>
+  <a href="#community" data-i18n="nComm">Общност</a>
+</nav>
+
+<main>
+  <div class="lang" role="group" aria-label="Language / Език">
+    <button type="button" data-lang="bg" aria-pressed="true">БГ</button>
+    <button type="button" data-lang="en" aria-pressed="false">EN</button>
+  </div>
+
+  <header class="hero">
+    <div class="portrait">
+      <img src="founder.jpg" width="800" height="800" alt="Kraziman: cartoon portrait with long hair, sunglasses and a goatee">
+      <span class="sticker" aria-hidden="true">Underworld Crusaders</span>
+    </div>
+    <div class="copy">
+      <h1 aria-label="Kraziman"><span class="l" style="--i:0" aria-hidden="true">K</span><span class="l" style="--i:1" aria-hidden="true">r</span><span class="l" style="--i:2" aria-hidden="true">a</span><span class="l" style="--i:3" aria-hidden="true">z</span><span class="l" style="--i:4" aria-hidden="true">i</span><span class="l" style="--i:5" aria-hidden="true">m</span><span class="l" style="--i:6" aria-hidden="true">a</span><span class="l" style="--i:7" aria-hidden="true">n</span></h1>
+      <p class="role"><span data-i18n="role">Стриймър</span> &middot; <span data-i18n="founderOf">основател на</span> <b class="uc">Underworld Crusaders</b></p>
+      <p class="tagline" data-i18n="tagline">Играя, готвя, гледам анимета и се забавлявам.</p>
+      <div class="btns">
+        <a class="btn go" data-site="Twitch" href="https://www.twitch.tv/notkraziman" data-i18n="heroTw">Гледай стрийма</a>
+        <a class="btn" href="https://links.underworldcrusaders.org" data-i18n="heroLinks">Всички линкове</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="ticker-wrap" aria-hidden="true">
+    <div class="ticker"><div class="track"><span class="tk"></span><span class="tk"></span></div></div>
+  </div>
+
+  <section class="block reveal" id="watch">
+    <h2 class="label" data-i18n="watchH">Гледай</h2>
+    <div class="player" id="player">
+      <span class="chipTag">Twitch &middot; notkraziman</span>
+      <button type="button" class="start" id="start">
+        <span class="play" aria-hidden="true"></span>
+        <span class="cap" data-i18n="playCap">Натисни, за да гледаш</span>
+        <span class="note" data-i18n="playNote">Зарежда плейъра на Twitch</span>
+      </button>
+    </div>
+    <div class="under">
+      <a class="btn go" data-site="Twitch" href="https://www.twitch.tv/notkraziman" data-i18n="openTw">Отвори в Twitch</a>
+    </div>
+  </section>
+
+  <section class="block reveal" id="find">
+    <h2 class="label" data-i18n="findH">Намери ме</h2>
+    <a class="link wide" href="https://links.underworldcrusaders.org">
+      <span class="slot" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a4 4 0 0 0 5.600 0l3-3a4 4 0 0 0-5.600-5.600l-1 1"/><path d="M14 10a4 4 0 0 0-5.600 0l-3 3a4 4 0 0 0 5.600 5.600l1-1"/></svg></span>
+      <span class="text"><span class="name" data-i18n="linksName">Всички мои линкове</span><span class="sub" data-i18n="linksSub">YouTube, Instagram, X и още на едно място</span></span>
+      <span class="go" aria-hidden="true">&rsaquo;</span>
+    </a>
+  </section>
+
+  <section class="block reveal about" id="about">
+    <h2 class="label" data-i18n="aboutH">За мен</h2>
+    <div class="about-wrap">
+      <p class="fullname"><span class="fn" data-i18n="fn">Александър</span><b class="uc">Kraziman</b><span class="ln" data-i18n="ln">Танчев</span></p>
+      <div class="about-text">
+        <p data-i18n="aboutP1">Обичам да играя видео игри, да готвя, да гледам анимета и най-вече да ми е забавно и готино.</p>
+        <p data-i18n="aboutP2">На стрийма ще е основно игри, а ако ми хрумне и нещо различно, ще го видите тук.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="block reveal" id="community">
+    <h2 class="label" data-i18n="commH">Общността</h2>
+    <div class="guild">
+      <h3>Underworld Crusaders</h3>
+      <p data-i18n="commP">Моята общност за геймъри: играем заедно, правим събития и се забавляваме. Всеки е добре дошъл.</p>
+      <div class="chips">
+        <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="11" rx="5.500"/><path d="M7 10.500v3M5.500 12h3"/><circle cx="16" cy="11.200" r=".8" fill="currentColor"/><circle cx="18.500" cy="13.500" r=".8" fill="currentColor"/></svg><span data-i18n="c1">Играем заедно</span></span>
+        <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span data-i18n="c2">Събития и стриймове</span></span>
+        <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4.500h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-8l-5 4v-4H5a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2Z"/></svg><span data-i18n="c3">Забавляваме се</span></span>
+      </div>
+      <div class="steps">
+        <div class="step"><span class="slot num" aria-hidden="true">1</span><span class="text"><span class="name" data-i18n="s1t">Влез в Discord</span><span class="sub" data-i18n="s1p">Натисни бутона по-долу.</span></span></div>
+        <div class="step"><span class="slot num" aria-hidden="true">2</span><span class="text"><span class="name" data-i18n="s2t">Кажи здравей</span><span class="sub" data-i18n="s2p">Представи се в чата.</span></span></div>
+        <div class="step"><span class="slot num" aria-hidden="true">3</span><span class="text"><span class="name" data-i18n="s3t">Намери своя екип</span><span class="sub" data-i18n="s3p">Избери игрите, които играеш.</span></span></div>
+      </div>
+      <a class="btn red" data-site="Discord" href="https://discord.underworldcrusaders.org" data-i18n="commBtn">Влез в Discord</a>
+    </div>
+  </section>
+
+  <footer>&copy; 2026 Kraziman / Underworld Crusaders</footer>
+</main>
+
+<!-- Leave confirmation -->
+<dialog id="confirm" aria-labelledby="c-title">
+  <div class="box">
+    <h2 id="c-title" data-i18n="cTitle">Напускаш страницата</h2>
+    <p id="c-body"></p>
+    <p class="url" id="c-url"></p>
+    <div class="actions">
+      <button type="button" class="btn" id="c-cancel" data-i18n="cCancel">Отказ</button>
+      <a class="btn go" id="c-go" target="_blank" rel="noopener noreferrer" data-i18n="cGo">Продължи</a>
+    </div>
+  </div>
+</dialog>
+
+<script>
+  var STRINGS = {
+    bg: {
+      title: "Kraziman | Стриймър",
+      nWatch: "Гледай", nFind: "Линкове", nAbout: "За мен", nComm: "Общност",
+      role: "Стриймър", founderOf: "основател на",
+      tagline: "Играя, готвя, гледам анимета и се забавлявам.",
+      heroTw: "Гледай стрийма", heroLinks: "Всички линкове",
+      ticker: "Игри • Стриймове • Готвене • Анимета • Общност • Забавление • ",
+      watchH: "Гледай",
+      playCap: "Натисни, за да гледаш", playNote: "Зарежда плейъра на Twitch",
+      openTw: "Отвори в Twitch",
+      findH: "Намери ме",
+      linksName: "Всички мои линкове", linksSub: "YouTube, Instagram, X и още на едно място",
+      aboutH: "За мен",
+      fn: "Александър", ln: "Танчев",
+      aboutP1: "Обичам да играя видео игри, да готвя, да гледам анимета и най-вече да ми е забавно и готино.",
+      aboutP2: "На стрийма ще е основно игри, а ако ми хрумне и нещо различно, ще го видите тук.",
+      commH: "Общността",
+      commP: "Моята общност за геймъри: играем заедно, правим събития и се забавляваме. Всеки е добре дошъл.",
+      c1: "Играем заедно", c2: "Събития и стриймове", c3: "Забавляваме се",
+      s1t: "Влез в Discord", s1p: "Натисни бутона по-долу.",
+      s2t: "Кажи здравей", s2p: "Представи се в чата.",
+      s3t: "Намери своя екип", s3p: "Избери игрите, които играеш.",
+      commBtn: "Влез в Discord",
+      cTitle: "Напускаш страницата",
+      cBody: "Ще отвориш {site} в нов раздел.",
+      cGo: "Продължи", cCancel: "Отказ"
+    },
+    en: {
+      title: "Kraziman | Streamer",
+      nWatch: "Watch", nFind: "Links", nAbout: "About", nComm: "Community",
+      role: "Streamer", founderOf: "founder of",
+      tagline: "I play games, cook, watch anime and have a good time.",
+      heroTw: "Watch the stream", heroLinks: "All my links",
+      ticker: "Games • Streams • Cooking • Anime • Community • Fun • ",
+      watchH: "Watch",
+      playCap: "Press to watch", playNote: "Loads the Twitch player",
+      openTw: "Open on Twitch",
+      findH: "Find me",
+      linksName: "All my links", linksSub: "YouTube, Instagram, X and more in one place",
+      aboutH: "About me",
+      fn: "Alexander", ln: "Tanchev",
+      aboutP1: "I love playing video games, cooking, watching anime and, most of all, having a good, fun time.",
+      aboutP2: "Streams will mostly be games, and if I come up with something different, you'll see it here.",
+      commH: "The community",
+      commP: "My community for gamers: we play together, run events and have fun. Everyone is welcome.",
+      c1: "Play together", c2: "Events and streams", c3: "Hang out",
+      s1t: "Join the Discord", s1p: "Hit the button below.",
+      s2t: "Say hi", s2p: "Introduce yourself in chat.",
+      s3t: "Find your squad", s3p: "Pick the games you play.",
+      commBtn: "Join the Discord",
+      cTitle: "Leaving this page",
+      cBody: "You're about to open {site} in a new tab.",
+      cGo: "Continue", cCancel: "Cancel"
+    }
+  };
+
+  var currentLang = "bg";
+  var currentSite = "";
+  var dlg = document.getElementById("confirm");
+
+  function renderDialogBody() {
+    document.getElementById("c-body").textContent =
+      STRINGS[currentLang].cBody.replace("{site}", currentSite);
+  }
+
+  function setLang(lang) {
+    var dict = STRINGS[lang] || STRINGS.bg;
+    currentLang = STRINGS[lang] ? lang : "bg";
+    document.documentElement.lang = currentLang;
+    document.title = dict.title;
+    document.querySelectorAll("[data-i18n]").forEach(function (el) {
+      el.textContent = dict[el.getAttribute("data-i18n")];
+    });
+    document.querySelectorAll(".tk").forEach(function (el) {
+      el.textContent = new Array(4).join(dict.ticker);
+    });
+    document.querySelectorAll(".lang button").forEach(function (btn) {
+      btn.setAttribute("aria-pressed", btn.getAttribute("data-lang") === currentLang ? "true" : "false");
+    });
+    if (currentSite) renderDialogBody();
+    try { localStorage.setItem("lang", currentLang); } catch (e) {}
+  }
+
+  document.querySelectorAll(".lang button").forEach(function (btn) {
+    btn.addEventListener("click", function () { setLang(btn.getAttribute("data-lang")); });
+  });
+
+  var saved = "bg";
+  try { saved = localStorage.getItem("lang") || "bg"; } catch (e) {}
+  setLang(saved);
+
+  // Ask before leaving to another site
+  document.querySelectorAll("a[data-site]").forEach(function (a) {
+    a.addEventListener("click", function (e) {
+      if (e.button !== 0 || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
+      if (typeof dlg.showModal !== "function") return;
+      e.preventDefault();
+      currentSite = a.getAttribute("data-site");
+      renderDialogBody();
+      document.getElementById("c-url").textContent = a.href.replace(/^https?:\/\//, "");
+      document.getElementById("c-go").href = a.href;
+      dlg.showModal();
+      document.getElementById("c-go").focus();
+    });
+  });
+  document.getElementById("c-cancel").addEventListener("click", function () { dlg.close(); });
+  document.getElementById("c-go").addEventListener("click", function () {
+    setTimeout(function () { dlg.close(); }, 0);
+  });
+  dlg.addEventListener("click", function (e) { if (e.target === dlg) dlg.close(); });
+
+  // Twitch player loads only when clicked (keeps the page fast)
+  var startBtn = document.getElementById("start");
+  startBtn.addEventListener("click", function () {
+    var f = document.createElement("iframe");
+    f.src = "https://player.twitch.tv/?channel=notkraziman&parent=" + encodeURIComponent(location.hostname || "localhost");
+    f.title = "Twitch: notkraziman";
+    f.setAttribute("allow", "autoplay; fullscreen");
+    f.allowFullscreen = true;
+    document.getElementById("player").appendChild(f);
+    startBtn.remove();
+  });
+
+  // Reveal sections as they scroll into view
+  var reveals = document.querySelectorAll(".reveal");
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); }
+      });
+    }, { threshold: 0.12 });
+    reveals.forEach(function (el) { io.observe(el); });
+  } else {
+    reveals.forEach(function (el) { el.classList.add("in"); });
+  }
+
+  // Floating pixels in the background
+  if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    var colors = ["#ac82e9", "#ff5555", "#d8cab8"];
+    for (var i = 0; i < 22; i++) {
+      var d = document.createElement("div");
+      var size = 3 + Math.random() * 4;
+      d.className = "p";
+      d.style.left = Math.random() * 100 + "vw";
+      d.style.width = d.style.height = size + "px";
+      d.style.background = colors[i % colors.length];
+      d.style.animationDuration = 9 + Math.random() * 10 + "s";
+      d.style.animationDelay = -Math.random() * 18 + "s";
+      document.body.appendChild(d);
+    }
+  }
+</script>
+</body>
+</html>
